@@ -9,6 +9,11 @@ class Person extends Component {
     };
   }
 
+  handleCollapse = (event, item) => {
+    item.expanded = !item.expanded;
+    console.log(item.expanded);
+  };
+
   renderTable = () => {
     if (!this.state.persons || !this.state.persons.length) {
       return null;
@@ -25,11 +30,21 @@ class Person extends Component {
           <tbody>
             {this.state.persons.map((item, index) => {
               return (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
-                  <td>{item.email}</td>
-                  <td>{item.creditScore}</td>
-                </tr>
+                <React.Fragment>
+                  <tr
+                    key={item.id}
+                    onClick={(event) => this.handleCollapse(event, item)}
+                  >
+                    <td>{item.name}</td>
+                    <td>{item.email}</td>
+                    <td>{item.creditScore}</td>
+                  </tr>
+                  {item.expanded && (
+                    <tr>
+                      <td colspan="3">BLA</td>
+                    </tr>
+                  )}
+                </React.Fragment>
               );
             })}
           </tbody>

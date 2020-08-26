@@ -8,16 +8,27 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      persons: []
+      persons: [],
     };
   }
 
   subscribe = () => {
     socket.on('personTransaction', (person) => {
       if (person !== undefined) {
-        this.setState((prevState) => ({
-          persons: [...prevState.persons, person],
-        }));
+        let persons = [...this.state.persons];
+        const index = persons.findIndex((e) => e.id === person.id);
+        if (index > -1) {
+          let pers = { ...persons[index] };
+          pers = person;
+          persons[index] = pers;
+        } else {
+          persons.push(person);
+        }
+
+        this.setState({ persons: persons });
+        // this.setState((prevState) => ({
+        //   persons: [...prevState.persons, person],
+        // }));
       }
     });
   };
