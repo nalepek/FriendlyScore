@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PersonTransactions from './PersonTransactions';
 
 class Person extends Component {
   constructor(props) {
@@ -6,12 +7,15 @@ class Person extends Component {
 
     this.state = {
       persons: [],
+      expandedIndex: null
     };
   }
 
-  handleCollapse = (event, item) => {
+  handleCollapse = (event, item, index) => {
     item.expanded = !item.expanded;
-    console.log(item.expanded);
+    let persons = [...this.state.persons];
+    persons[index] = item;
+    this.setState({ persons: persons });
   };
 
   renderTable = () => {
@@ -19,7 +23,7 @@ class Person extends Component {
       return null;
     } else {
       return (
-        <table className='table table-striped'>
+        <table className='table table-striped table-sm'>
           <thead>
             <tr>
               <th>Name</th>
@@ -30,10 +34,10 @@ class Person extends Component {
           <tbody>
             {this.state.persons.map((item, index) => {
               return (
-                <React.Fragment>
+                <React.Fragment key={item.id}>
                   <tr
-                    key={item.id}
-                    onClick={(event) => this.handleCollapse(event, item)}
+                    onClick={(event) => this.handleCollapse(event, item, index)}
+                    className='selectable'
                   >
                     <td>{item.name}</td>
                     <td>{item.email}</td>
@@ -41,7 +45,9 @@ class Person extends Component {
                   </tr>
                   {item.expanded && (
                     <tr>
-                      <td colspan="3">BLA</td>
+                      <td colSpan="3">
+                        <PersonTransactions transactions={item.transactions}></PersonTransactions>
+                      </td>
                     </tr>
                   )}
                 </React.Fragment>
@@ -55,6 +61,11 @@ class Person extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.persons !== prevProps.persons) {
+      for (let i = 0; i < prevProps.persons.length; i++){
+        if (prevProps.persons[i].expanded){
+          this.props.persons[i].expanded = prevProps.persons[i].expanded;
+        }
+      }
       this.setState({ persons: this.props.persons });
     }
   }

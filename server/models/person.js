@@ -4,11 +4,6 @@ class Person {
     this.name = name;
     this.creditScore = creditScore;
     this.email = email;
-    this.transactions = [];
-  }
-
-  addTransaction(transaction) {
-    this.transactions.push(transaction);
   }
 }
 

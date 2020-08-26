@@ -13,23 +13,41 @@ class App extends React.Component {
   }
 
   subscribe = () => {
-    socket.on('personTransaction', (person) => {
-      if (person !== undefined) {
+    socket.on('personTransaction', (person, transaction) => {
+      if (person) {
+        if (!person.transactions){
+          person.transactions = [];
+        }
+
+        person.transactions.push(transaction);
+        
         let persons = [...this.state.persons];
-        const index = persons.findIndex((e) => e.id === person.id);
+        const index = persons.findIndex((e) => {
+          return e.id === person.id;
+        });
         if (index > -1) {
           let pers = { ...persons[index] };
+          const transactions = [...pers.transactions];
           pers = person;
+          pers.transactions = transactions;
+          pers.transactions.push(transaction);
           persons[index] = pers;
         } else {
           persons.push(person);
         }
 
         this.setState({ persons: persons });
-        // this.setState((prevState) => ({
-        //   persons: [...prevState.persons, person],
-        // }));
       }
+    });
+
+    socket.on('updateTransactions', (transactions) => {
+      const persons = [...this.state.persons];
+      for (let i = 0; i < persons.length; i++) {
+        const personTransactions = transactions.filter((e) => { return e.personId === persons[i].id });
+        persons[i].transactions = personTransactions;
+      }
+
+      this.setState({ persons: persons });
     });
   };
 

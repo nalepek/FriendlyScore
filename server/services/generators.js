@@ -5,6 +5,7 @@ const categories = require('../dictionaries/categories.json');
 
 function generateId() {
   return generateNumber();
+  //return Date.now();
 }
 
 function generatePersonName() {
